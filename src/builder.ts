@@ -1,5 +1,5 @@
-import Vuex, { Store, StoreOptions } from "../../vuex";
-import Vue from "../../vue";
+import Vuex, { Store, StoreOptions } from "vuex";
+import Vue from "vue";
 import {
   ReturnedMutations,
   ReturnedActions,
@@ -9,7 +9,6 @@ import {
   GettersPayload
 } from "./types";
 import { enableHotReload } from "./hotModule";
-import { oc } from "ts-optchain";
 
 Vue.use(Vuex);
 
@@ -26,7 +25,10 @@ function createModuleTriggers(moduleName: string) {
   }
 
   function read(name) {
-    return () => oc(storeBuilder).getters[moduleName + "/" + name]();
+    return () => {
+      const getter = storeBuilder && storeBuilder.getters && storeBuilder.getters[`${moduleName}/${name}`] || null;
+      return getter && getter() || undefined;
+    }
   }
 
   return {
